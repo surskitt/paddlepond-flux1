@@ -1,0 +1,17 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  releaseName: traefik
+  chart:
+    repository: https://containous.github.io/traefik-helm-chart
+    name: traefik
+    version: 7.0.0
+  values:
+    image:
+      name: traefik
+      tag: 2.2.0
+    additionalArguments:
+    - "--providers.kubernetesingress"
