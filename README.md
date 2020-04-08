@@ -17,3 +17,28 @@ To allow flux to access the repo, a deploy key needs to be added. This can be ob
     fluxctl identity --k8s-fwd-ns flux
 
 Add this key in the repo settings with write access.
+
+## Secrets
+
+Secrets can be created by installing [kubeseal](https://github.com/bitnami-labs/sealed-secrets) and using the following:
+
+To fetch the public key certificate from the repo:
+
+    kubeseal --fetch-cert \
+        --controller-namespace=kube-system \
+        --controller-name=sealed-secrets \
+    > pub-cert.pem
+
+Create secrets using the standard methods, outputting to file rather than deploying to the cluster.
+
+    kubectl -n dev create secret generic basic-auth \
+        --from-literal=user=admin \
+        --from-literal=password=admin \
+        --dry-run \
+        -o json > basic-auth.json
+
+Use the public key to sign the secrets and create a sealedsecrets manifest.
+
+    kubeseal --format=yaml --cert=pub-cert.pem < basic-auth.json > basic-auth.yaml
+
+Delete the json, check in the yaml.
