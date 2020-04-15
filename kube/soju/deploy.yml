@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - image: shanedabes/soju:0.1.1
-        name: gowon
+        name: soju
         env:
           - name: SOJU_USER_1_NAME
             valueFrom:
