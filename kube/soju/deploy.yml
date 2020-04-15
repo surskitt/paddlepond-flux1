@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soju
+  namespace: soju
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: soju
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: soju
+    spec:
+      containers:
+      - image: shanedabes/soju:0.1.1
+        name: gowon
+        env:
+          - name: SOJU_USER_1_NAME
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NAME
+          - name: SOJU_USER_1_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_PASSWORD
+          - name: SOJU_USER_1_NETWORK_1_NAME
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_1_NAME
+          - name: SOJU_USER_1_NETWORK_1_SERVER
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_1_SERVER
+          - name: SOJU_USER_1_NETWORK_1_NICK
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_1_NICK
+          - name: SOJU_USER_1_NETWORK_1_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_1_PASSWORD
+          - name: SOJU_USER_1_NETWORK_1_CHANNELS
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_1_CHANNELS
+          - name: SOJU_USER_1_NETWORK_2_NAME
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_2_NAME
+          - name: SOJU_USER_1_NETWORK_2_SERVER
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_2_SERVER
+          - name: SOJU_USER_1_NETWORK_2_NICK
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_2_NICK
+          - name: SOJU_USER_1_NETWORK_2_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_2_PASSWORD
+          - name: SOJU_USER_1_NETWORK_2_CHANNELS
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_USER_1_NETWORK_2_CHANNELS
+          - name: SOJU_TRUST_ADD
+            valueFrom:
+              secretKeyRef:
+                name: soju-env
+                key: SOJU_TRUST_ADD
+      restartPolicy: Always
