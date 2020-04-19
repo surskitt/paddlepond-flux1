@@ -42,3 +42,9 @@ Use the public key to sign the secrets and create a sealedsecrets manifest.
     kubeseal --format=yaml --cert=pub-cert.pem < basic-auth.json > basic-auth.yaml
 
 Delete the json, check in the yaml.
+
+### Editing secrets
+
+The [ss_edit.sh](kube/ss_edit.sh) script can be used to edit existing sealed secrets files. Run with `-h` to see the options.
+
+If you need to add a new secret value, this can be done using kubeseal's `--merge-into` flag. [More details can be found here](https://github.com/bitnami-labs/sealed-secrets#update-existing-secrets).
