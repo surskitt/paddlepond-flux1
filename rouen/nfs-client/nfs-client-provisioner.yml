@@ -1,0 +1,29 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: nfs-client-provisioner
+  namespace: nfs-client
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: nfs-client-provisioner
+  rollback:
+    enable: true
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: nfs-client-provisioner
+    version: 1.2.8
+  values:
+    nfs:
+      server: "gadwall.lan"
+      path: "/.k8s"
+      mountOptions:
+        - tcp
+        - intr
+        - hard
+        - noatime
+        - nodiratime
+        - rsize=32768
+        - wsize=32768
