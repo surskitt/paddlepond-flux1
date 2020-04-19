@@ -15,5 +15,4 @@ spec:
       url: git@github.com:shanedabes/paddlepond.git
       path: kube
     image:
-      repository: raspbernetes/flux
       tag: 1.18.0
