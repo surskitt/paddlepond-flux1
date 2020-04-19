@@ -1,0 +1,19 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: flux
+  namespace: flux
+spec:
+  releaseName: flux
+  chart:
+    repository: https://charts.fluxcd.io
+    name: flux
+    version: 1.2.0
+  values:
+    git:
+      url: git@github.com:shanedabes/paddlepond.git
+      path: kube
+    image:
+      repository: raspbernetes/flux
+      tag: 1.18.0

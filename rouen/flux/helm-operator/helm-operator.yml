@@ -1,0 +1,21 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: helm-operator
+  namespace: flux
+spec:
+  releaseName: flux
+  chart:
+    repository: https://charts.fluxcd.io
+    name: fluxcd/helm-operator
+    version: 0.7.0
+  values:
+    git:
+      ssh:
+        secretName: flux-git-deploy
+    image:
+      repository: raspbernetes/helm-operator
+      tag: v1.0.0-rc9
+    helm:
+      versions: v3
