@@ -5,12 +5,13 @@
 #
 
 usage() {
-    echo "Usage: ${0} [-p PUB_KEY] [-n NAMESPACE] -s SECRETS_FILE -S SECRET_NAME"
+    echo "Usage: ${0} [-p PUB_KEY] [-n NAMESPACE] -s SECRETS_FILE -S SECRET_NAME [-r]"
     echo "Options:"
     echo "  -p    location of the sealed secrets public key"
     echo "  -n    sealed-secrets namespace"
     echo "  -s    secrets file to decrypt"
     echo "  -S    name of secret to edit"
+    echo "  -r    read the secret without making changes"
     echo "  -h    show this help"
 }
 
@@ -40,8 +41,9 @@ check_dep base64
 
 SS_PUBLIC_KEY="$(git rev-parse --show-toplevel)/kube/pub-cert.pem"
 SS_NAMESPACE="sealed-secrets"
+READ=false
 
-while getopts 'p:n:s:S:h' opt; do
+while getopts 'p:n:s:S:rh' opt; do
     case "${opt}" in
         p)
             SS_PUBLIC_KEY="${OPTARG}"
@@ -54,6 +56,9 @@ while getopts 'p:n:s:S:h' opt; do
             ;;
         S)
             SECRET_NAME="${OPTARG}"
+            ;;
+        r)
+            READ=true
             ;;
         h)
             usage
@@ -77,13 +82,18 @@ check_opt "${SECRET_NAME}"  "Error: pass a secret name using -S"
 SS_PRIV="$(kubectl -n ${SS_NAMESPACE} get secret -l sealedsecrets.bitnami.com/sealed-secrets-key -o yaml)"
 
 SECRETS=$(kubeseal --recovery-unseal --recovery-private-key <(echo "${SS_PRIV}") --cert "${SS_PUBLIC_KEY}" < "${SECRETS_FILE}")
+SECRET=$(yq -r ".data[\"${SECRET_NAME}\"]" <<< "${SECRETS}"|base64 -d)
 
-TEMPSECRET="$(mktemp)"
-yq -r ".data[\"${SECRET_NAME}\"]" <<< "${SECRETS}"|base64 -d > "${TEMPSECRET}"
+if "${READ}"; then
+    echo "${SECRET}"
+else
+    TEMPSECRET="$(mktemp)"
+    echo "${SECRET}" > "${TEMPSECRET}"
 
-${EDITOR:-vim} "${TEMPSECRET}"
-NEWSECRET="$(base64 -w 0 ${TEMPSECRET})"
+    ${EDITOR:-vim} "${TEMPSECRET}"
+    NEWSECRET="$(base64 -w 0 ${TEMPSECRET})"
 
-rm "${TEMPSECRET}"
+    rm "${TEMPSECRET}"
 
-yq ".data[\"${SECRET_NAME}\"] = \"${NEWSECRET}\"" <<< "${SECRETS}" | kubeseal --format=yaml --cert="${SS_PUBLIC_KEY}" > "${SECRETS_FILE}"
+    yq ".data[\"${SECRET_NAME}\"] = \"${NEWSECRET}\"" <<< "${SECRETS}" | kubeseal --format=yaml --cert="${SS_PUBLIC_KEY}" > "${SECRETS_FILE}"
+fi
