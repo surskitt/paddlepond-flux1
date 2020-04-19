@@ -25,7 +25,7 @@ Secrets can be created by installing [kubeseal](https://github.com/bitnami-labs/
 To fetch the public key certificate from the repo:
 
     kubeseal --fetch-cert \
-        --controller-namespace=kube-system \
+        --controller-namespace=sealed-secrets \
         --controller-name=sealed-secrets \
     > pub-cert.pem
 
