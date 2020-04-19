@@ -13,6 +13,6 @@ spec:
   values:
     git:
       url: git@github.com:shanedabes/paddlepond.git
-      path: kube
+      path: rouen
     image:
       tag: 1.18.0
