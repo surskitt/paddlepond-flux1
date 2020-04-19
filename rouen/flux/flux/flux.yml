@@ -15,4 +15,4 @@ spec:
       url: git@github.com:shanedabes/paddlepond.git
       path: rouen
     image:
-      tag: 1.18.0
+      tag: 1.19.0
