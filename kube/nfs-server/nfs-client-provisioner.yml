@@ -19,6 +19,8 @@ spec:
     image:
       repository: quay.io/external_storage/nfs-client-provisioner-arm
       tag: v3.1.0-k8s1.11
+    nodeSelector:
+      kubernetes.io/arch: "arm64"
     nfs:
       # FIX: can't get a connection internally for some reason
       # server: nfs-server
