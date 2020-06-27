@@ -15,6 +15,3 @@ users:
 
 locale: "en_GB.UTF-8"
 timezone: "Europe/London"
-
-runcmd:
-  - curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 --no-deploy traefik

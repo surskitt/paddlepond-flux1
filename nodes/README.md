@@ -11,14 +11,22 @@ The following steps produces my specific setup. This assumes nodes with the name
 
 ## Setup
 
-This directory contains cloud init config files that can be used alongside the flash tool to provision the k3s raspberry pi nodes. To flash an sd card, run:
+### Master setup
+
+Start by setting up mallard as the default node. Install ubuntu server, set IP to 192.168.2.5, set up ssh keys and sudo, then run:
+
+    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 --no-deploy traefik
+
+### Worker setup
+
+This directory contains cloud init config files that can be used alongside the flash tool to provision the k3s raspberry pi worker nodes. To flash an sd card, run:
 
     sudo flash -d <DEVICE> -u <NODE_YML> -F firmware/nobtcmd.txt -f <UBUNTU_IMAGE_FILE>
 
 The image files are:
 
-- **gadwall**: master node
-- **pochard/muscovy**: worker nodes
+- **mallard**: master node
+- **gadwall/pochard/muscovy**: worker nodes
 
 (They're ducks).
 
@@ -30,7 +38,7 @@ Alternatively, the included scripts can be used to create config for the worker 
 
 First, provision the master node as normal. Wait for it to be ready before continuing.
 
-    ssh gadwall.lan cat /etc/rancher/k3s/k3s.yaml|sed 's#127.0.0.1#192.168.2.1#g' > ~/.kube/config
+    ssh mallard.lan cat /etc/rancher/k3s/k3s.yaml|sed 's#127.0.0.1#192.168.2.5#g' > ~/.kube/config
     watch kubectl get nodes
 
 Once the node is ready, run `addjoincmd.sh` against the worker node configs.

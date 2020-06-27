@@ -20,7 +20,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: nfs-server
-        image: marxengels/armv7nfssrv
+        image: itsthenetwork/nfs-server-alpine:12
         env:
         - name: SHARED_DIRECTORY
           value: /mnt/storage

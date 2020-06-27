@@ -20,11 +20,11 @@ new_fn="${1%.${ext}}_joincmd.yml"
 
 orig_yml="$(<${1})"
 
-k3s_join_token="$(ssh gadwall.lan sudo cat /var/lib/rancher/k3s/server/node-token)"
+k3s_join_token="$(ssh mallard.lan sudo cat /var/lib/rancher/k3s/server/node-token)"
 
 cat << EOF > "${new_fn}"
 ${orig_yml}
 
 runcmd:
-  - curl -sfL https://get.k3s.io | K3S_URL=https://192.168.2.1:6443 K3S_TOKEN=${k3s_join_token} sh -
+  - curl -sfL https://get.k3s.io | K3S_URL=https://192.168.2.5:6443 K3S_TOKEN=${k3s_join_token} sh -
 EOF

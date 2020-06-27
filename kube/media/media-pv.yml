@@ -14,7 +14,7 @@ spec:
     # FIX: connect to nfs server internally
     # server: nfs-server
     server: gadwall.lan
-    path: /media
+    path: /hd1/media
   mountOptions:
     - tcp
     - intr
