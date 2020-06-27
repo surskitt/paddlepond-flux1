@@ -23,14 +23,14 @@ spec:
         image: itsthenetwork/nfs-server-alpine:12
         env:
         - name: SHARED_DIRECTORY
-          value: /mnt/storage
+          value: /srv/hd1
         ports:
           - name: nfs
             containerPort: 2049
         securityContext:
           privileged: true
         volumeMounts:
-          - mountPath: /mnt/storage
+          - mountPath: /srv
             name: nfs-vol
       nodeSelector:
         node-role.kubernetes.io/nfs: "true"
