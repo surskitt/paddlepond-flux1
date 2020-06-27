@@ -8,6 +8,7 @@ spec:
   ports:
     - name: nfs
       port: 32049
+      targetPort: 2049
   selector:
     role: nfs-server-2
   type: LoadBalancer
