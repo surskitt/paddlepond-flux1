@@ -13,8 +13,8 @@ spec:
   nfs:
     # FIX: connect to nfs server internally
     # server: nfs-server
-    server: gadwall.lan
-    path: /hd1/media
+    server: mallard.lan
+    path: /media
   mountOptions:
     - tcp
     - intr
