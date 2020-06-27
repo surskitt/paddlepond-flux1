@@ -19,7 +19,7 @@ spec:
   values:
     image:
       repository: plexinc/pms-docker
-      tag: 1.19.1.2645-ccb6eb67e
+      tag: 1.19.2.2737-b69929dab
     kubePlex:
       enabled: false
     ingress:
@@ -48,7 +48,7 @@ spec:
         cpu: 35m
         memory: 1500Mi
   valuesFrom:
-    - secretKeyRef:
-        name: plex-secrets
-        namespace: plex
-        key: values.yml
+  - secretKeyRef:
+      name: plex-secrets
+      namespace: plex
+      key: values.yml
