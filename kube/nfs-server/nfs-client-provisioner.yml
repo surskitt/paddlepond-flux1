@@ -23,7 +23,7 @@ spec:
       # FIX: can't get a connection internally for some reason
       # server: nfs-server
       server: "gadwall.lan"
-      path: "/hd1/.k8s"
+      path: "/.k8s"
       mountOptions:
         - tcp
         - intr
