@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: linuxserver/sonarr
-      tag: 3.0.3.701-ls174
+      tag: 3.0.3.896-ls29
     timezone: "Europe/London"
     puid: 1000
     pgid: 1000
