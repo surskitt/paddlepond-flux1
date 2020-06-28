@@ -1,0 +1,1 @@
+{"jobID":"eb5ea8be-0b02-4a26-84d6-7d9fc3c91216","spec":{"type":"policy","cause":{"Message":"","User":"shanedabes \u003cshane@donohoe.cc\u003e"},"spec":{"gowon:deployment/gowon":{"add":{},"remove":{"locked":"true","locked_msg":"true","locked_user":"true"}}}},"result":null}
