@@ -1,0 +1,125 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: prometheus-operator
+  namespace: monitoring
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: prometheus-operator
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: prometheus-operator
+    version: 8.15.10
+  values:
+    prometheusOperator:
+      createCustomResource: false
+      nodeSelector:
+        kubernetes.io/arch: "amd64"
+    alertmanager:
+      enabled: false
+    nodeExporter:
+      serviceMonitor:
+        relabelings:
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          sourceLabels:
+          - __meta_kubernetes_pod_node_name
+          targetLabel: kubernetes_node
+    grafana:
+      deploymentStrategy:
+        type: Recreate
+      persistence:
+        enabled: true
+        storageClassName: nfs-client
+        size: 10Gi
+        accessModes:
+        - ReadWriteOnce
+      extraContainers: |
+        - name: renderer
+          image: grafana/grafana-image-renderer:latest        
+      env:
+        GF_EXPLORE_ENABLED: true
+        GF_PANELS_DISABLE_SANITIZE_HTML: true
+        GF_RENDERING_SERVER_URL: http://localhost:8081/render
+        GF_RENDERING_CALLBACK_URL: http://localhost:3000/
+        GF_LOG_FILTERS: rendering:debug
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+      sidecar:
+        dashboards:
+          provider:
+            disableDelete: false
+            allowUiUpdates: true
+      plugins:
+      - natel-discrete-panel
+      - pr0ps-trackmap-panel
+      - grafana-piechart-panel
+      - vonage-status-panel
+      - grafana-worldmap-panel
+      grafana.ini:
+        paths:
+          data: /var/lib/grafana/data
+          logs: /var/log/grafana
+          plugins: /var/lib/grafana/plugins
+          provisioning: /etc/grafana/provisioning
+        analytics:
+          check_for_updates: true
+        log:
+          mode: console
+        grafana_net:
+          url: https://grafana.net
+    kubeEtcd:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeStateMetrics:
+      enabled: false
+      nodeSelector:
+        kubernetes.io/arch: "amd64"
+    kubelet:
+      serviceMonitor:
+        metricRelabelings:
+        - action: replace
+          sourceLabels:
+          - node
+          targetLabel: instance
+    prometheus:
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+      prometheusSpec:
+        nodeSelector:
+          kubernetes.io/arch: "amd64"
+        ruleSelector: {}
+        ruleNamespaceSelector: {}
+        ruleSelectorNilUsesHelmValues: false
+        serviceMonitorSelector: {}
+        serviceMonitorNamespaceSelector: {}
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelector: {}
+        podMonitorNamespaceSelector: {}
+        podMonitorSelectorNilUsesHelmValues: false
+        retention: 12d
+        enableAdminAPI: true
+        walCompression: true
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: nfs-client
+              resources:
+                requests:
+                  storage: 20Gi
+  valuesFrom:
+  - secretKeyRef:
+      name: prometheus-secrets
+      namespace: monitoring
+      key: values.yml
