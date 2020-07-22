@@ -1,0 +1,31 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: rm-scrape
+  namespace: media
+spec:
+  schedule: "0 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: rm-scraper
+              image: shanedabes/rm_scraper:1.0.0
+              env:
+                - name: RMS_HOST
+                  value: transmission-transmission-openvpn
+                - name: RMS_PORT
+                  value: "9091"
+                - name: RMS_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: rm-cronjob-secrets
+                      key: RMS_USER
+                - name: RMS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: rm-cronjob-secrets
+                      key: RMS_PASSWORD
+          restartPolicy: OnFailure
