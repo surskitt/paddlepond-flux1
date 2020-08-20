@@ -1,0 +1,1 @@
+{"jobID":"f20f2692-dd03-6e40-1a3e-e8fe1decaf5a","spec":{"type":"policy","cause":{"Message":"","User":"shanedabes \u003cshane@isda.best\u003e"},"spec":{"media:helmrelease/radarr":{"add":{"locked":"true","locked_msg":"","locked_user":"shanedabes \u003cshane@isda.best\u003e"},"remove":{}}}},"result":null}
