@@ -38,10 +38,10 @@ spec:
       movies:
         enabled: false
       extraExistingClaimMounts:
-        - name: media
-          existingClaim: nfs-media-pvc
-          mountPath: /media
-          readOnly: false
+      - name: media
+        existingClaim: nfs-media-pvc
+        mountPath: /media
+        readOnly: false
     resources:
       requests:
         memory: 350Mi
@@ -49,7 +49,7 @@ spec:
       limits:
         memory: 1000Mi
   valuesFrom:
-    - secretKeyRef:
-        name: radarr-secrets
-        namespace: media
-        key: values.yml
+  - secretKeyRef:
+      name: radarr-secrets
+      namespace: media
+      key: values.yml
