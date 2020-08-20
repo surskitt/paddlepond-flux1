@@ -1,0 +1,1 @@
+{"jobID":"d823b54f-07d8-2c23-51cf-e8a0058ad7a7","spec":{"type":"policy","cause":{"Message":"","User":"shanedabes \u003cshane@isda.best\u003e"},"spec":{"soju:deployment/soju":{"add":{"locked":"true","locked_msg":"","locked_user":"shanedabes \u003cshane@isda.best\u003e"},"remove":{}}}},"result":null}
