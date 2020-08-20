@@ -1,0 +1,1 @@
+{"jobID":"d3ce5d6b-7ab2-7d9b-f701-1c86d851a4f7","spec":{"type":"policy","cause":{"Message":"","User":"shanedabes \u003cshane@isda.best\u003e"},"spec":{"media:helmrelease/radarr":{"add":{},"remove":{"automated":"true"}}}},"result":null}
