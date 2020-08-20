@@ -38,6 +38,7 @@ spec:
       movies:
         enabled: false
       media:
+        enabled: true
         existingClaim: nfs-media-pvc
       resources:
       requests:
