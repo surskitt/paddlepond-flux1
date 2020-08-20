@@ -37,6 +37,8 @@ spec:
         enabled: false
       movies:
         enabled: false
+      media:
+        enabled: false
       extraExistingClaimMounts:
         - name: media
           existingClaim: nfs-media-pvc
