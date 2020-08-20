@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: linuxserver/radarr
-      tag: 3.0.0.3465-ls20
+      tag: arm64v8-3.0.0.3465-ls20
     timezone: "Europe/London"
     puid: 1000
     pgid: 1000
