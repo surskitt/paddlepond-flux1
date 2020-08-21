@@ -74,6 +74,11 @@ spec:
           mode: console
         grafana_net:
           url: https://grafana.net
+      additionalDataSources:
+        - name: loki
+          type: loki
+          access: proxy
+          url: http://loki:3100
     kubeEtcd:
       enabled: false
     kubeControllerManager:
