@@ -123,6 +123,11 @@ spec:
               resources:
                 requests:
                   storage: 20Gi
+        additionalScrapeConfigs:
+          - job_name: openwrt
+            static_configs:
+              - targets:
+                  - 192.168.0.1:9100
   valuesFrom:
   - secretKeyRef:
       name: prometheus-secrets
