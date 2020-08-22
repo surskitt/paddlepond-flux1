@@ -4,6 +4,9 @@ kind: HelmRelease
 metadata:
   name: flux
   namespace: flux
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
 spec:
   releaseName: flux
   helmVersion: v3
@@ -24,6 +27,6 @@ spec:
       enabled: true
       serviceMonitor:
         create: true
+        namespace: flux
         interval: 30s
         scrapeTimeout: 10s
-        namespace: flux
