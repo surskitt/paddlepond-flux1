@@ -40,7 +40,7 @@ spec:
       media:
         enabled: true
         existingClaim: nfs-media-pvc
-      resources:
+    resources:
       requests:
         memory: 350Mi
         cpu: 25m
