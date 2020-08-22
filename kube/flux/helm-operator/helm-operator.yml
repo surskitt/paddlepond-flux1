@@ -8,11 +8,11 @@ metadata:
     fluxcd.io/ignore: "false"
     fluxcd.io/automated: "false"
 spec:
-  releaseName: flux
+  releaseName: helm-operator
   helmVersion: v3
   chart:
     repository: https://charts.fluxcd.io
-    name: helm-operator
+    name: fluxcd/helm-operator
     version: 1.2.0
   values:
     git:

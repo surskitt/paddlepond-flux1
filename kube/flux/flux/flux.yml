@@ -12,7 +12,7 @@ spec:
   helmVersion: v3
   chart:
     repository: https://charts.fluxcd.io
-    name: flux
+    name: fluxcd/flux
     version: 1.4.1
   values:
     git:
