@@ -6,14 +6,24 @@ metadata:
   namespace: flux
 spec:
   releaseName: flux
+  helmVersion: v3
   chart:
     repository: https://charts.fluxcd.io
     name: flux
-    version: 1.2.0
+    version: 1.4.1
   values:
     git:
       url: git@github.com:shanedabes/paddlepond.git
       path: kube
     image:
       repository: raspbernetes/flux
-      tag: 1.18.0
+      tag: 1.20.2
+    memcached:
+      enabled: true
+    prometheus:
+      enabled: true
+      serviceMonitor:
+        create: true
+        interval: 30s
+        scrapeTimeout: 10s
+        namespace: flux
