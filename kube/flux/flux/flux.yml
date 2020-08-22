@@ -13,7 +13,7 @@ spec:
   chart:
     repository: https://charts.fluxcd.io
     name: fluxcd/flux
-    version: 1.4.1
+    version: 1.5.0
   values:
     git:
       url: git@github.com:shanedabes/paddlepond.git
