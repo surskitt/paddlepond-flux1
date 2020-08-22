@@ -14,11 +14,11 @@ spec:
   chart:
     repository: https://billimek.com/billimek-charts/
     name: sonarr
-    version: 3.0.2
+    version: 4.1.1
   values:
     image:
       repository: linuxserver/sonarr
-      tag: 3.0.3.896-ls29
+      tag: 3.0.3.911-ls38
     timezone: "Europe/London"
     puid: 1000
     pgid: 1000
@@ -37,17 +37,25 @@ spec:
         enabled: false
       tv:
         enabled: false
-      extraExistingClaimMounts:
-        - name: media
-          existingClaim: nfs-media-pvc
-          mountPath: /media
-          readOnly: false
+      media:
+        enabled: true
+        existingClaim: nfs-media-pvc
     resources:
       requests:
         memory: 350Mi
         cpu: 25m
       limits:
         memory: 1000Mi
+    exportarr:
+      enabled: true
+      image:
+        repository: onedr0p/exportarr
+        tag: v0.3.3
+        pullPolicy: IfNotPresent
+      port: 9708
+      url: "http://localhost:7878"
+      serviceMonitor:
+        enabled: true
   valuesFrom:
     - secretKeyRef:
         name: sonarr-secrets
