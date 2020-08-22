@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: linuxserver/nzbget
-      tag: v21.0-ls42
+      tag: v21.1-r2311-ls5
     timezone: "Europe/London"
     puid: 1000
     pgid: 1000
