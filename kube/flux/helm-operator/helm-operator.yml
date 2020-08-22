@@ -12,7 +12,7 @@ spec:
   helmVersion: v3
   chart:
     repository: https://charts.fluxcd.io
-    name: fluxcd/helm-operator
+    name: helm-operator
     version: 1.2.0
   values:
     git:
