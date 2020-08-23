@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/instance: transmission-exporter
     app.kubernetes.io/name: transmission-exporter
   name: transmission-exporter
+  namespace: media
 spec:
   endpoints:
   - interval: 4m
