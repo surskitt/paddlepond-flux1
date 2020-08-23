@@ -39,10 +39,6 @@ spec:
           env:
             - name: TRANSMISSION_ADDR
               value: "http://transmission-transmission-openvpn:9091"
-            # - name: TRANSMISSION_USERNAME
-            #   value: shane
-            # - name: TRANSMISSION_PASSWORD
-            #   value: ***REMOVED***
             - name: TRANSMISSION_USERNAME
               valueFrom:
                 secretKeyRef:
