@@ -1,0 +1,26 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: speedtest-prometheus
+  namespace: monitoring
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: speedtest-prometheus
+  helmVersion: v3
+  chart:
+    repository: https://billimek.com/billimek-charts
+    name: speedtest-prometheus
+    version: 1.0.1
+  values:
+    serviceMonitor:
+      enabled: true
+      interval: "60m"
+      scrapeTimeout: 90s
+    replicaCount: 1
+    image:
+      repository: billimek/prometheus-speedtest-exporter
+      tag: 1.1.0
+      pullPolicy: IfNotPresent
