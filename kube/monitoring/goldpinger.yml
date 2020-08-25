@@ -19,8 +19,8 @@ spec:
       tag: 3.0.0.3
     service:
       type: ClusterIP
-    ingress:
-      enabled: true
+    # ingress:
+    #   enabled: true
     serviceMonitor:
       enabled: true
       namespace: monitoring
