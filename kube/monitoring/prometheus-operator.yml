@@ -51,6 +51,8 @@ spec:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: traefik
+          traefik.ingress.kubernetes.io/router.tls: "true"
+          cert-manager.io/cluster-issuer: letsencrypt-prod
       sidecar:
         dashboards:
           provider:
@@ -101,6 +103,8 @@ spec:
         enabled: true
         annotations:
           kubernetes.io/ingress.class: traefik
+          traefik.ingress.kubernetes.io/router.tls: "true"
+          cert-manager.io/cluster-issuer: letsencrypt-prod
       prometheusSpec:
         nodeSelector:
           kubernetes.io/arch: "amd64"
@@ -129,7 +133,7 @@ spec:
               - targets:
                   - 192.168.0.1:9100
   valuesFrom:
-  - secretKeyRef:
-      name: prometheus-secrets
-      namespace: monitoring
-      key: values.yml
+    - secretKeyRef:
+        name: prometheus-secrets
+        namespace: monitoring
+        key: values.yml
