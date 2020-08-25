@@ -1,3 +1,4 @@
+---
 apiVersion: helm.fluxcd.io/v1
 kind: HelmRelease
 metadata:
@@ -8,7 +9,7 @@ spec:
   chart:
     repository: https://containous.github.io/traefik-helm-chart
     name: traefik
-    version: 7.0.0
+    version: 9.1.0
   values:
     image:
       name: traefik
@@ -24,6 +25,8 @@ spec:
     deployment:
       enabled: true
     ports:
+      web:
+        redirectTo: websecure
       metrics:
         port: 8082
         exposedPort: 8082
