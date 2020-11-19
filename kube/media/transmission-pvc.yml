@@ -3,10 +3,12 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: transmission-config
+  namespace: media
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: nfs-client
+  # storageClassName: nfs-client
+  storageClassName: local-path
   resources:
     requests:
-      storage: 1Mi
+      storage: 1Gi
