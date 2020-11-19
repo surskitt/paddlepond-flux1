@@ -34,7 +34,8 @@ spec:
         type: Recreate
       persistence:
         enabled: true
-        storageClassName: nfs-client
+        # storageClassName: nfs-client
+        storageClassName: local-path
         size: 10Gi
         accessModes:
         - ReadWriteOnce
@@ -123,7 +124,8 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: nfs-client
+              # storageClassName: nfs-client
+              storageClassName: local-path
               resources:
                 requests:
                   storage: 20Gi

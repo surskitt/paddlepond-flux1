@@ -18,7 +18,8 @@ spec:
     loki:
       persistence:
         enabled: true
-        storageClassName: nfs-client
+        # storageClassName: nfs-client
+        storageClassName: local-path
         size: 50Gi
       serviceMonitor:
         enabled: true
