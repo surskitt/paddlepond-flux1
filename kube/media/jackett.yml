@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: linuxserver/jackett
-      tag: v0.16.771-ls6
+      tag: version-v0.16.2199
     timezone: "Europe/London"
     puid: 1000
     pgid: 1000
@@ -31,7 +31,8 @@ spec:
     persistence:
       config:
         enabled: true
-        storageClass: "nfs-client"
+        # storageClass: "nfs-client"
+        storageClass: local-path
       # downloads:
       #   enabled: false
       # extraMounts:
