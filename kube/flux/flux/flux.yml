@@ -15,9 +15,12 @@ spec:
     name: flux
     version: 1.5.0
   values:
+    sync:
+      interval: 60m
     git:
       url: git@github.com:shanedabes/paddlepond.git
       path: kube
+      pollInterval: 60m
     image:
       repository: raspbernetes/flux
       tag: 1.20.2
@@ -30,3 +33,5 @@ spec:
         namespace: flux
         interval: 30s
         scrapeTimeout: 10s
+    registry:
+      automationInterval: 60m

@@ -23,7 +23,7 @@ spec:
       tag: v1.2.0
     helm:
       versions: v3
-    chartSyncInterval: "5m"
+    chartSyncInterval: "15m"
     statusUpdateInternal: "60s"
     prometheus:
       enabled: true
