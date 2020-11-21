@@ -1,0 +1,38 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: home-assistant
+  namespace: home-assistant
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: home-assistant
+  rollback:
+    enable: true
+  chart:
+    repository: https://k8s-at-home.com/charts/
+    name: home-assistant
+    version: 2.7.0
+  values:
+    image:
+      tag: 0.116.1
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: traefik
+        traefik.ingress.kubernetes.io/router.tls: "true"
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+    persistence:
+      enabled: true
+      storageClass: local-path
+    monitoring:
+      enabled: true
+      serviceMonitor:
+        interval: 5m
+  valuesFrom:
+    - secretKeyRef:
+        name: hass-secrets
+        namespace: home-assistant
+        key: values.yml
