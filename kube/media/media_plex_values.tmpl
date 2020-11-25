@@ -1,0 +1,12 @@
+---
+ingress:
+  hosts:
+    - ${PLEX_HOST}
+  annotations:
+    external-dns.alpha.kubernetes.io/target: ${CNAME_HOST}
+  tls:
+    - hosts:
+        - ${PLEX_HOST}
+      secretName: plex-tls
+
+claimToken: ${PLEX_CLAIM}
