@@ -32,6 +32,8 @@ spec:
       enabled: true
       serviceMonitor:
         interval: 5m
+    # nodeSelector:
+    #   kubernetes.io/hostname: "gadwall"
   valuesFrom:
     - secretKeyRef:
         name: hass-secrets
