@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eo pipefail
 
 usage() {
     echo "Usage: ${0} [-p PUB_KEY] [-f SECRETS_TEMPLATE]"
     echo "Options:"
     echo "  -p    location of the sealed secrets public key (defaults to SCRIPT_DIR/pub-key.pem"
-    echo "  -f    only use this file for secrets templating"
+    echo "  -f    template single specific file"
+    echo "  -i    interactively fill missing environment variables"
     echo "  -h    show this help"
 }
 
@@ -29,21 +30,26 @@ check_opt() {
 }
 
 check_dep envsubst
-check_dep base64
 check_dep kubeseal
+check_dep find
+check_dep grep
 
 D="$(dirname "${0}")"
 
 PUB_KEY_FN="${D}/pub-cert.pem"
 SECRET_FILE_SEARCH="${D}"
+INTERACTIVE=false
 
-while getopts 'p:f:h' opt; do
+while getopts 'p:f:ih' opt; do
     case "${opt}" in
         p)
             PUB_KEY_FN="${OPTARG}"
             ;;
         f)
             SECRET_FILE_SEARCH="${OPTARG}"
+            ;;
+        i)
+            INTERACTIVE=true
             ;;
         h)
             usage
@@ -56,80 +62,48 @@ while getopts 'p:f:h' opt; do
     esac
 done
 
-# get a single quoted list of all environment variables in format $ENV and ${ENV}
-ev=$(
-    echo -n \'
-    env|cut -d '=' -f 1|while read -r e; do
-        echo -n \ \$"${e}" \$\{"${e}"\}
-    done
-    echo \'
-)
+# if env file is piped in, source it
+if [ -p /dev/stdin ]; then
+    # shellcheck disable=SC1091
+    source /dev/stdin
+fi
 
-tmpl_check() {
-    for i in $(tr ' ' '\n' <<< "${2}" | tr '=' '\n'); do
-        if grep -q '^\$' <<< "${i}"; then
-            echo "WARNING: ${i} was not substituted in ${1}"
-        fi
-    done | sort -u >&2
-}
+# recursively save all *_secret.yml.tmpl files to an array
+readarray -d '' secretfiles < <(find "${SECRET_FILE_SEARCH}" -name '*secrets.yml.tmpl' -print0)
 
-tmpl() {
-    # use ev env to only substitute vars in the env
-    t="$(envsubst "${ev}" < "${1}")"
+if [[ "${#secretfiles[@]}" -eq 0 ]]; then
+    echo "No secret files found" >&2
+    exit 1
+fi
 
-    tmpl_check "${1}" "${t}"
+# extract all environment variable names from secret files
+env_vars="$(grep -Po '\$\{?\K[^ \"\}]*' "${secretfiles[@]}")"
 
-    echo "${t}"
-}
-
-seal_values() {
-    IFS="_" read -r ns n _ <<< "${1##*/}"
-
-    vb64=$(tmpl "${1}" | base64 -w 0)
-
-    cat <<- EOF | kubeseal --format=yaml --cert="${PUB_KEY_FN}" > "${1%/*}/01-${n}-values.yml"
-	apiVersion: v1
-	kind: Secret
-	metadata:
-	  name: ${n}-values
-	  namespace: ${ns}
-	data:
-	  values: ${vb64}
-	type: Opaque
-	EOF
-}
-
-env_data() {
-    t="$(envsubst "${ev}" < "${1}")"
-
-    tmpl_check "${1}" "${t}"
-
-    envsubst < "${1}" | while IFS="=" read -r k v; do
-        echo "  ${k}": "$(base64 -w 0 <<< "${v}")"
-    done
-}
-
-seal_env() {
-    IFS="_" read -r ns n _ <<< "${1##*/}"
-
-    cat <<- EOF | kubeseal --format=yaml --cert="${D}/pub-cert.pem" > "${1%/*}/01-${n}-env.yml"
-	apiVersion: v1
-	kind: Secret
-	metadata:
-	  name: ${n}-env
-	  namespace: ${ns}
-	data:
-	$(env_data "${1}")
-	type: Opaque
-	EOF
-}
-
-find "${SECRET_FILE_SEARCH}" -name '*_*_values.tmpl' | while read -r v; do
-    echo "Sealing ${v}"
-    seal_values "${v}"
+# find all unset environment variables
+env_not_set=()
+for e in ${env_vars}; do
+    if [[ "${!e}" == "" ]]; then
+        env_not_set+=("${e}")
+    fi
 done
 
-find "${SECRET_FILE_SEARCH}" -name '*_*_env.tmpl' | while read -r v; do
-    echo "Sealing ${v}"
-    seal_env "${v}"
+# if there are unset env vars, either exit or read them if in interactive mode
+if [[ "${#env_not_set[@]}" -gt 0 ]]; then
+    if ! "${INTERACTIVE}"; then
+        echo "env vars not set: ${env_not_set[*]}"
+        exit 1
+    fi
+
+    for e in "${env_not_set[@]}"; do
+        echo -n "${e}: "
+        read -r "${e?}"
+    done
+fi
+
+# Seal all files using templates and environment variables
+for s in "${secretfiles[@]}"; do
+    fn="${s%%.tmpl}"
+    echo "Sealing ${fn}"
+    t="$(envsubst < "${s}")"
+    kubeseal --format=yaml --cert="${PUB_KEY_FN}" <<< "${t}" > "${fn}"
 done
