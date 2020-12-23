@@ -1,0 +1,32 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: arch-repo-ingress
+  namespace: arch-repo
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: arch-repo
+  helmVersion: v3
+  chart:
+    git: git@github.com:shanedabes/paddlepond
+    ref: master
+    path: charts/ingress
+  values:
+    ingress:
+      namespace: arch-repo
+      service:
+        name: arch-repo
+        port: http
+      ingressClass: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        traefik.ingress.kubernetes.io/router.tls: "true"
+      tlsSecretName: arch-repo-tls
+  valuesFrom:
+    - secretKeyRef:
+        name: arch-repo-ingress-values
+        namespace: arch-repo
+        key: values

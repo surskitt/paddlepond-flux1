@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arch-repo
+  namespace: arch-repo
+  labels:
+    app: arch-repo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arch-repo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: arch-repo
+    spec:
+      containers:
+        - image: shanedabes/docker-arch-repo:0.1.1
+          name: arch-repo
+          env:
+            - name: ARCH_REPO_REFRESH_TIMES
+              value: "05:00"
+            - name: ARCH_REPO_GIT_URL
+              value: "https://github.com/shanedabes/PKGBUILD.git"
+            - name: ARCH_REPO_NAME
+              value: shane-arch
+          volumeMounts:
+            - name: repo-dir
+              mountPath: /repo
+        - image: shanedabes/docker-arch-repo-server:0.3.0
+          name: httpserver
+          volumeMounts:
+            - name: repo-dir
+              mountPath: /repo
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+      volumes:
+        - name: repo-dir
+          persistentVolumeClaim:
+            claimName: repo-dir
+      restartPolicy: Always
