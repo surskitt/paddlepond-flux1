@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftp-server
+  namespace: nfs-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: sftp-server
+  template:
+    metadata:
+      labels:
+        role: sftp-server
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: nfs-server
+          image: corilus/sftp
+          args: ["sftp:$1$1G0vZY4c$FVRoO8kUjXYLnU.wNF.rD0:e:1000:1000"]
+          ports:
+            - name: nfs
+              containerPort: 22
+          volumeMounts:
+            - mountPath: /home/sftp/storage
+              name: sftp-vol
+      volumes:
+        - name: sftp-vol
+          persistentVolumeClaim:
+            claimName: data-nfs-server-pvc
+      nodeSelector:
+        node-role.kubernetes.io/nfs: "true"
