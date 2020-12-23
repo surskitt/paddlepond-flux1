@@ -25,7 +25,7 @@ spec:
       # FIX: can't get a connection internally for some reason
       # server: nfs-server
       server: "mallard.lan"
-      path: "/.k8s"
+      path: "/k8s"
       mountOptions:
         - tcp
         - intr
@@ -34,5 +34,6 @@ spec:
         - nodiratime
         - rsize=32768
         - wsize=32768
+        - port=42049
     # storageClass:
     #   defaultClass: true
