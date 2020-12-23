@@ -1,0 +1,22 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: reloader
+  namespace: reloader
+spec:
+  releaseName: reloader
+  helmVersion: v3
+  chart:
+    repository: https://stakater.github.io/stakater-charts
+    name: reloader
+    version: 0.0.75
+  values:
+    image:
+      tag: v0.0.75
+    reloader:
+      deployment:
+        nodeSelector:
+          kubernetes.io/arch: "amd64"
+    serviceMonitor:
+      enabled: true
