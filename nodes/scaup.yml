@@ -1,0 +1,19 @@
+#cloud-config
+
+hostname: scaup
+manage_etc_hosts: true
+
+users:
+  - name: shane
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users,docker,nfs,sudo
+    ssh-import-id: None
+    lock_passwd: true
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkjEyMGA0JZ+ssTHLjMfJG3nEUdN6rioxMf8nu57h2xHIQSfiAwqFSbR7TFIcobdhUpE0Y7sqkLTfBfsk/CQFuenwauLPRD3NifXuLydCbf6WnSJoBr61ljA8wo4SQFiGxwnbic6mRXuo6V7F9XZKD0ZrP6+Z6ni/YXTCIFo/a6gxFDY+bblXwuqcr9/uWzVX0xX63yf3e2imNvu2BbCkeT5/vmqL4FlmxvXoLbqBS1eZWbnXCZurpGVNWLKeLUffNFdt6QgIgGhLpPYBNNwOpPSIRnMoF0FVtiW9Imk8fpDEiWBb5Y9pOTc515pqc/lewtAzSaL84MuvO6Fl5w53J shane@wigeon
+
+locale: "en_GB.UTF-8"
+timezone: "Europe/London"
+
+package_upgrade: false
