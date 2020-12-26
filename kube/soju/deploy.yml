@@ -16,73 +16,109 @@ spec:
       labels:
         app: soju
     spec:
+      initContainers:
+        - name: sojuctl-init
+          image: shanedabes/sojuctl:0ddc0de7e55070bcdf9c29fb88330dbe1444f776
+          command: ["/app/sojuctl-init.sh"]
+          env:
+            - name: SOJU_IRC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: soju-cfg
+                  key: SOJU_IRC_PASSWORD
+          volumeMounts:
+            - name: sojuctl-init-sh
+              mountPath: /app/sojuctl-init.sh
+              subPath: sojuctl-init.sh
+            - name: config
+              mountPath: /config
+            - name: soju-cfg
+              mountPath: /config/soju.cfg
+              subPath: soju.cfg
+        - name: cert-init
+          image: shanedabes/soju:0ddc0de7e55070bcdf9c29fb88330dbe1444f776
+          command: ["/app/cert-init.sh"]
+          volumeMounts:
+            - name: certificates
+              mountPath: /etc/ssl/certs-new
+            - name: cert-init
+              mountPath: /app/cert-init.sh
+              subPath: cert-init.sh
       containers:
-      - image: shanedabes/soju:0.1.1
-        name: soju
-        env:
-        - name: SOJU_USER_1_NAME
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NAME
-        - name: SOJU_USER_1_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_PASSWORD
-        - name: SOJU_USER_1_NETWORK_1_NAME
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_1_NAME
-        - name: SOJU_USER_1_NETWORK_1_SERVER
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_1_SERVER
-        - name: SOJU_USER_1_NETWORK_1_NICK
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_1_NICK
-        - name: SOJU_USER_1_NETWORK_1_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_1_PASSWORD
-        - name: SOJU_USER_1_NETWORK_1_CHANNELS
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_1_CHANNELS
-        - name: SOJU_USER_1_NETWORK_2_NAME
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_2_NAME
-        - name: SOJU_USER_1_NETWORK_2_SERVER
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_2_SERVER
-        - name: SOJU_USER_1_NETWORK_2_NICK
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_2_NICK
-        - name: SOJU_USER_1_NETWORK_2_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_2_PASSWORD
-        - name: SOJU_USER_1_NETWORK_2_CHANNELS
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_USER_1_NETWORK_2_CHANNELS
-        - name: SOJU_TRUST_ADD
-          valueFrom:
-            secretKeyRef:
-              name: soju-env
-              key: SOJU_TRUST_ADD
+        - name: soju
+          image: shanedabes/soju:0ddc0de7e55070bcdf9c29fb88330dbe1444f776
+          command: ["/app/soju", "-config", "/config/soju.cfg"]
+          env:
+            - name: GODEBUG
+              value: x509ignoreCN=0
+          volumeMounts:
+            - name: soju-tls
+              mountPath: /config/tls
+              readOnly: true
+            - name: config
+              mountPath: /config
+            - name: certificates
+              mountPath: /etc/ssl/certs
+            - name: soju-cfg
+              mountPath: /config/soju.cfg
+              subPath: soju.cfg
+      volumes:
+        - name: config
+          emptyDir: {}
+        - name: certificates
+          emptyDir: {}
+        - name: soju-cfg
+          secret:
+            secretName: soju-cfg
+        - name: sojuctl-init-sh
+          configMap:
+            name: sojuctl-init-sh
+            defaultMode: 0777
+        - name: soju-tls
+          secret:
+            secretName: soju-tls
+        - name: cert-init
+          configMap:
+            name: cert-init
+            defaultMode: 0777
       restartPolicy: Always
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: irc-init
+  namespace: soju
+spec:
+  template:
+    spec:
+      containers:
+        - name: irc-init
+          image: shanedabes/soju:0ddc0de7e55070bcdf9c29fb88330dbe1444f776
+          command: ["/app/irc-init.sh"]
+          env:
+            - name: SOJU_IRC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: soju-cfg
+                  key: SOJU_IRC_PASSWORD
+            - name: SOJU_IRC_SYNIRC_NICKSERV
+              valueFrom:
+                secretKeyRef:
+                  name: soju-cfg
+                  key: SOJU_IRC_SYNIRC_NICKSERV
+            - name: SOJU_IRC_FREENODE_NICKSERV
+              valueFrom:
+                secretKeyRef:
+                  name: soju-cfg
+                  key: SOJU_IRC_FREENODE_NICKSERV
+          volumeMounts:
+            - name: irc-init
+              mountPath: /app/irc-init.sh
+              subPath: irc-init.sh
+      volumes:
+        - name: irc-init
+          configMap:
+            name: irc-init
+            defaultMode: 0777
+      restartPolicy: Never
+  backoffLimit: 4
