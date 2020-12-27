@@ -65,6 +65,7 @@ data:
       echo 'JOIN #python/freenode'
       echo 'JOIN #qutebrowser/freenode'
       echo 'JOIN #soju/freenode'
+      echo 'JOIN #ubuntu/freenode'
       echo 'JOIN #weechat/freenode'
       echo 'JOIN #wireguard/freenode'
 
