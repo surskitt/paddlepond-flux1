@@ -1,0 +1,31 @@
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: mosquitto
+  namespace: mosquitto
+  annotations:
+    fluxcd.io/ignore: "false"
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: mosquitto
+  rollback:
+    enable: true
+  chart:
+    repository: https://k8s-at-home.com/charts/
+    name: mosquitto
+    version: 0.5.0
+  values:
+    image:
+      tag: 1.6.12
+    service:
+      type: LoadBalancer
+    persistence:
+      config:
+        enabled: true
+        storageClass: nfs-client
+    monitor:
+      podMonitor:
+        enabled: true
+      sidecar:
+        enabled: true
