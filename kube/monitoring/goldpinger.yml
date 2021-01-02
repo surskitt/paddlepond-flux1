@@ -24,8 +24,3 @@ spec:
     serviceMonitor:
       enabled: true
       namespace: monitoring
-  valuesFrom:
-  - secretKeyRef:
-      name: goldpinger-secrets
-      namespace: monitoring
-      key: values.yml
